@@ -1,0 +1,32 @@
+---
+- name: managing journald config
+  template:
+    src: templates/journald.j2
+    dest: /etc/systemd/journald.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart journald
+
+- name: check chronyd
+  yum:
+    name: "{{ item }}"
+  with_items:
+  - chrony
+  - tzdata
+
+- name: set timezone
+  timezone:
+    name: "{{ timezone }}"
+
+- name: configure chrony
+  template:
+    src: templates/chrony.j2
+    dest: /etc/chrony.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart chrony
+
+- name: enable and start chrony
+  service: name=chronyd state=started enabled=yes

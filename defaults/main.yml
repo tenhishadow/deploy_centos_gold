@@ -1,0 +1,8 @@
+---
+install_open_vmware_tools: True
+add_users: True
+ntp_pool:
+  - "pool.ntp.org"
+journald_storage: "persistent"
+journald_maxuse: "10M"
+timezone: "Europe/Moscow"

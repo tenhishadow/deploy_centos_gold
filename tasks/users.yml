@@ -1,0 +1,35 @@
+---
+
+- name: create users
+  user:
+    comment: "{{ item.value.comment }}"
+    createhome: "{{ item.value.createhome }}"
+    group: "{{ item.value.group }}"
+    name: "{{ item.key }}"
+    password: "{{ item.value.password }}"
+    state: "{{ item.value.state }}"
+    system: "{{ item.value.system }}"
+    uid: "{{ item.value.uid }}"
+    update_password: "{{ item.value.update_password }}"
+  with_dict:
+    - "users"
+
+- name: check for sudo package
+  yum: name=sudo state=present
+
+- name: allow sudo without password for members of wheel
+  lineinfile:
+    state: present
+    line: "%wheel ALL=(ALL) NOPASSWD: ALL"
+    path: /etc/sudoers
+    group: root
+    owner: root
+
+- name: import ssh-keys for regular users
+  authorized_key:
+    user: "{{ item.key }}"
+    state: present
+    key: "{{ lookup('file', "{{ users_ssh_keys }}") }}" 
+  with_dict:
+    - "users"
+...

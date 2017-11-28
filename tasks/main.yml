@@ -1,0 +1,15 @@
+---
+- include: resolv.yml
+
+- include: packages.yml
+
+- include: open-vmware-tools.yml
+  when: install_open_vmware_tools
+
+- include: system.yml
+
+- name: manage root user setting
+  include: root.yml
+
+- include: users.yml
+  when: add_users

@@ -1,0 +1,7 @@
+---
+- name: restart chrony
+  service: name=chronyd state=restarted
+
+- name: restart journald
+  service: name=systemd-journald state=restarted
+...

@@ -1,0 +1,10 @@
+---
+- name: check for epel
+  yum: name=epel-release state=present
+
+- name: install opensource vmwaretools
+  yum: name=open-vm-tools state=latest
+
+- name: manage vmwaretools service
+  service: name=vmtoolsd state=started enabled=yes
+...
