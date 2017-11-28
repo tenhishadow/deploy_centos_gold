@@ -2,22 +2,15 @@
 - name: install epel-release
   yum: name=epel-release state=latest
 
+- name: update system
+  yum: name=* state=latest
+
 - name: install packages
   yum:
     name: "{{ item }}"
     state: present
   with_items:
-    - vim
-    - telnet
-    - nmap
-    - bind-utils
-    - htop
-    - salt-minion
-    - pigz
-    - wget
-    - git
-    - whois
-    - sudo
+    - install_packages
 
 - name: clean yum cache
   file:

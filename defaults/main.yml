@@ -6,3 +6,16 @@ ntp_pool:
 journald_storage: "persistent"
 journald_maxuse: "10M"
 timezone: "Europe/Moscow"
+install_packages:
+  - vim
+  - telnet
+  - nmap
+  - bind-utils
+  - htop
+  - salt-minion
+  - pigz
+  - wget
+  - git
+  - whois
+  - sudo
+

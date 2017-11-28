@@ -1,0 +1,31 @@
+---
+- name: remove old kernels
+  shell: $( which package-cleanup ) --oldkernels --count=1 -y
+
+- name: remove ssh hostkey to force generation after reboot
+  file: 
+    path: "{{ item }}"
+    state: absent
+  with_item:
+    - "/etc/ssh/ssh_host_rsa_key"
+    - "/etc/ssh/ssh_host_ecdsa_key"
+    - "/etc/ssh/ssh_host_ed25519_key"
+
+- name: remove rotated logs and archives
+  script: scripts/clean.sh
+
+#- name: find rotated logs and archives
+#  find:
+#    paths: "/var/log"
+#    recurce: "yes"
+#    use_regex: no
+#    patterns: "*.gz"
+#    hidden: yes
+#    file_type: file
+#  register: trash
+
+- name: clean journalctl log
+  shell: $( which journalctl ) --vacuum-time 1s
+
+
+...
