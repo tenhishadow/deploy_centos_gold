@@ -33,7 +33,8 @@
 - name: find journal files
   find:
     paths: "/var/log/journal"
-    recurce: "yes"hidden: yes
+    recurce: "yes"
+    hidden: yes
   register: journal_files
 
 - name: remove journal files
@@ -49,7 +50,7 @@
     paths: "/var/log"
     recurce: "yes"
     use_regex: no
-    patterns: "*.gz"
+    patterns: '*-2*,*.gz'
     hidden: yes
     file_type: file
   register: gzipped_logs
