@@ -20,6 +20,15 @@
   with_items:
     - "{{ var_ssh_hostkey.files|default([]) }}"
 
+- name: stop logging on server
+  service:
+    name: "{{ item }}"
+    state: stopped
+  with_items:
+    - "rsyslog.service"
+    - "systemd-journald.service"
+    - "systemd-journald.socket"
+
 - name: find rotated logs and archives
   find:
     paths: "/var/log"
@@ -44,6 +53,5 @@
   file:
     state: absent
     path: /var/cache/yum
-
 
 ...
