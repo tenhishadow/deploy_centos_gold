@@ -1,15 +1,26 @@
 ---
-- include: resolv.yml
 
-- include: packages.yml
+- name: manage resolving
+  include_tasks: resolv.yml
 
-- include: open-vmware-tools.yml
+- name: manage packages
+  include_tasks: packages.yml
+
+- name: install opensource vmware tools
+  include_tasks: open-vmware-tools.yml
   when: install_open_vmware_tools
 
-- include: system.yml
+- name: configure system
+  include_tasks: system.yml
 
 - name: manage root user setting
-  include: root.yml
+  include_tasks: root.yml
 
-- include: users.yml
+- name: manage users
+  include_tasks: users.yml
   when: add_users
+
+- name: prepare system
+  include_tasks: sysprep.yml
+
+...
