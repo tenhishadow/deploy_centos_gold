@@ -1,31 +1,49 @@
 ---
+
 - name: remove old kernels
   shell: $( which package-cleanup ) --oldkernels --count=1 -y
 
+- name: find ssh hostkey to force generation after reboot
+  find:
+    paths: "/etc/ssh"
+    recurce: "no"
+    use_regex: no
+    patterns: "^ssh_host_"
+    hidden: no
+    file_type: file
+  register: var_ssh_hostkey
+
 - name: remove ssh hostkey to force generation after reboot
-  file: 
-    path: "{{ item }}"
+  file:
+    path: "{{ item.path }}"
     state: absent
-  with_item:
-    - "/etc/ssh/ssh_host_rsa_key"
-    - "/etc/ssh/ssh_host_ecdsa_key"
-    - "/etc/ssh/ssh_host_ed25519_key"
+  with_items:
+    - "{{ var_ssh_hostkey.files|default([]) }}"
+
+- name: find rotated logs and archives
+  find:
+    paths: "/var/log"
+    recurce: "yes"
+    use_regex: no
+    patterns: "*.gz"
+    hidden: yes
+    file_type: file
+  register: gzipped_logs
 
 - name: remove rotated logs and archives
-  script: scripts/clean.sh
-
-#- name: find rotated logs and archives
-#  find:
-#    paths: "/var/log"
-#    recurce: "yes"
-#    use_regex: no
-#    patterns: "*.gz"
-#    hidden: yes
-#    file_type: file
-#  register: trash
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items:
+    - "{{ gzipped_logs.files|default([]) }}"
 
 - name: clean journalctl log
   shell: $( which journalctl ) --vacuum-time 1s
+
+- name: clean yum cache
+  file:
+    state: absent
+    path: /var/cache/yum
 
 
 ...
