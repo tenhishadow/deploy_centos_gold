@@ -19,6 +19,7 @@
     state: absent
   with_items:
     - "{{ var_ssh_hostkey.files|default([]) }}"
+  when: var_ssh_hostkey
 
 - name: stop logging on server
   service:
@@ -28,6 +29,20 @@
     - "rsyslog.service"
     - "systemd-journald.service"
     - "systemd-journald.socket"
+
+- name: find journal files
+  find:
+    paths: "/var/log/journal"
+    recurce: "yes"hidden: yes
+  register: journal_files
+
+- name: remove journal files
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items:
+    - "{{ journal_files.files|default([]) }}"
+  when: journal_files
 
 - name: find rotated logs and archives
   find:
@@ -45,9 +60,7 @@
     state: absent
   with_items:
     - "{{ gzipped_logs.files|default([]) }}"
-
-- name: clean journalctl log
-  shell: $( which journalctl ) --vacuum-time 1s
+  when: gzipped_logs
 
 - name: clean yum cache
   file:
