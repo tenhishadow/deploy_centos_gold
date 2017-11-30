@@ -7,7 +7,6 @@
     owner: root
     group: root
     mode: 0644
-  notify: restart journald
 
 - name: check chronyd
   yum:
@@ -27,7 +26,6 @@
     owner: root
     group: root
     mode: 0644
-  notify: restart chrony
 
 - name: enable and start chrony
   service: name=chronyd enabled=yes
