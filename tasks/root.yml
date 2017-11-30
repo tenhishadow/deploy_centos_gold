@@ -1,15 +1,15 @@
 ---
 
 - name: set up root password
-  user: 
+  user:
     name: root
-    update_password: yes
+    update_password: always
     password: "{{ root_passwd }}"
 
 - name: import ssh-keys for root user
   authorized_key:
     exclusive: yes
-    key: "{{ lookup('file', "{{ root_ssh_keys }}") }}"
+    key: "{{ root_ssh_keys }}"
     state: present
     user: "root"
 

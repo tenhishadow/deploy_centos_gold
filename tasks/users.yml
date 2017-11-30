@@ -2,17 +2,16 @@
 
 - name: create users
   user:
+    name: "{{ item.key }}"
     comment: "{{ item.value.comment }}"
     createhome: "{{ item.value.createhome }}"
     group: "{{ item.value.group }}"
-    name: "{{ item.key }}"
     password: "{{ item.value.password }}"
     state: "{{ item.value.state }}"
     system: "{{ item.value.system }}"
     uid: "{{ item.value.uid }}"
     update_password: "{{ item.value.update_password }}"
-  with_dict:
-    - "users"
+  with_dict: "{{ users }}"
 
 - name: check for sudo package
   yum: name=sudo state=present
@@ -29,7 +28,7 @@
   authorized_key:
     user: "{{ item.key }}"
     state: present
-    key: "{{ lookup('file', "{{ users_ssh_keys }}") }}" 
-  with_dict:
-    - "users"
+    key: "{{ users_ssh_keys }}"
+  with_dict: "{{ users }}"
+
 ...

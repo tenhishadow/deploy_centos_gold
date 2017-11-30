@@ -1,4 +1,5 @@
 ---
+
 install_open_vmware_tools: True
 add_users: True
 ntp_pool:
@@ -18,4 +19,6 @@ install_packages:
   - git
   - whois
   - sudo
+  - yum-utils # important for package-cleanup
 
+...
