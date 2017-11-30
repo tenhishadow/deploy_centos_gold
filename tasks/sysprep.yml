@@ -73,8 +73,6 @@
     hidden: "yes"
     file_type: "file"
   register: bash_history
-  tags:
-    - clean_bash_history
 
 - name: remove bash history files
   file:
@@ -83,15 +81,11 @@
   with_items:
     - "{{ bash_history.files|default([]) }}"
   when: bash_history
-  tags:
-    - clean_bash_history
-
-- name: remove machine id
-  file:
-    path: "/etc/machine-id"
-    state: "absent"
-  tags:
-    - clean_machine_id
+# It can break system
+#- name: remove machine id
+#  file:
+#    path: "/etc/machine-id"
+#    state: "absent"
 
 - name: touch autorelabel
   file:
@@ -130,8 +124,6 @@
     hidden: "yes"
     file_type: "any"
   register: temp_files
-  tags:
-  - clean_temp_files
 
 - name: remove temp files
   file:
@@ -140,7 +132,5 @@
   with_items:
     - "{{ temp_files.files|default([]) }}"
   when: temp_files
-  tags:
-  - clean_temp_files
 
 ...
