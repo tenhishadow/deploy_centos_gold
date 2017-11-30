@@ -10,7 +10,7 @@
     name: "{{ item }}"
     state: present
   with_items:
-    - install_packages
+    - "{{ install_packages }}"
 
 - name: clean yum cache
   file:
