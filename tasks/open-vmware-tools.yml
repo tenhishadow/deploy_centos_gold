@@ -6,5 +6,5 @@
   yum: name=open-vm-tools state=latest
 
 - name: manage vmwaretools service
-  service: name=vmtoolsd state=started enabled=yes
+  service: name=vmtoolsd enabled=yes
 ...
