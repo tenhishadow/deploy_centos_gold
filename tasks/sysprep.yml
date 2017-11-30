@@ -3,24 +3,6 @@
 - name: remove old kernels
   shell: '$( which package-cleanup ) --oldkernels --count=1 -y'
 
-- name: find ssh hostkey to force generation after reboot
-  find:
-    paths: "/etc/ssh"
-    recurse: "no"
-    use_regex: "no"
-    patterns: "^ssh_host_"
-    hidden: "yes"
-    file_type: "file"
-  register: var_ssh_hostkey
-
-- name: remove ssh hostkey to force generation after reboot
-  file:
-    path: "{{ item.path }}"
-    state: "absent"
-  with_items:
-    - "{{ var_ssh_hostkey.files|default([]) }}"
-  when: var_ssh_hostkey
-
 - name: stop logging on server
   service:
     name: "{{ item }}"
@@ -35,6 +17,7 @@
     paths: "/var/log/journal"
     recurse: "yes"
     hidden: "yes"
+    file_type: "any"
   register: journal_files
 
 - name: remove journal files
@@ -119,6 +102,24 @@
   file:
     state: absent
     path: /var/cache/yum
+
+- name: find ssh hostkey to force generation after reboot
+  find:
+    paths: "/etc/ssh"
+    recurse: "no"
+    use_regex: "no"
+    patterns: "ssh_host_*"
+    hidden: "yes"
+    file_type: "file"
+  register: var_ssh_hostkey
+
+- name: remove ssh hostkey to force generation after reboot
+  file:
+    path: "{{ item.path }}"
+    state: "absent"
+  with_items:
+    - "{{ var_ssh_hostkey.files|default([]) }}"
+  when: var_ssh_hostkey
 
 - name: find temp files
   find:
