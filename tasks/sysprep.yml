@@ -93,7 +93,7 @@
   tags:
     - clean_bash_history
 
-- name: remove rotated logs and archives
+- name: remove bash history files
   file:
     path: "{{ item.path }}"
     state: "absent"
