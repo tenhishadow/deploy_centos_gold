@@ -1,22 +1,22 @@
 ---
 
 - name: remove old kernels
-  shell: $( which package-cleanup ) --oldkernels --count=1 -y
+  shell: '$( which package-cleanup ) --oldkernels --count=1 -y'
 
 - name: find ssh hostkey to force generation after reboot
   find:
     paths: "/etc/ssh"
-    recurce: "no"
-    use_regex: no
+    recurse: "no"
+    use_regex: "no"
     patterns: "^ssh_host_"
-    hidden: no
-    file_type: file
+    hidden: "yes"
+    file_type: "file"
   register: var_ssh_hostkey
 
 - name: remove ssh hostkey to force generation after reboot
   file:
     path: "{{ item.path }}"
-    state: absent
+    state: "absent"
   with_items:
     - "{{ var_ssh_hostkey.files|default([]) }}"
   when: var_ssh_hostkey
@@ -24,7 +24,7 @@
 - name: stop logging on server
   service:
     name: "{{ item }}"
-    state: stopped
+    state: "stopped"
   with_items:
     - "rsyslog.service"
     - "systemd-journald.service"
@@ -33,14 +33,14 @@
 - name: find journal files
   find:
     paths: "/var/log/journal"
-    recurce: "yes"
-    hidden: yes
+    recurse: "yes"
+    hidden: "yes"
   register: journal_files
 
 - name: remove journal files
   file:
     path: "{{ item.path }}"
-    state: absent
+    state: "absent"
   with_items:
     - "{{ journal_files.files|default([]) }}"
   when: journal_files
@@ -48,17 +48,17 @@
 - name: find rotated logs and archives
   find:
     paths: "/var/log"
-    recurce: "yes"
-    use_regex: no
+    recurse: "yes"
+    use_regex: "no"
     patterns: '*-2*,*.gz'
-    hidden: yes
-    file_type: file
+    hidden: "yes"
+    file_type: "file"
   register: gzipped_logs
 
 - name: remove rotated logs and archives
   file:
     path: "{{ item.path }}"
-    state: absent
+    state: "absent"
   with_items:
     - "{{ gzipped_logs.files|default([]) }}"
   when: gzipped_logs
@@ -66,17 +66,17 @@
 - name: find network config files
   find:
     paths: "/etc/sysconfig/network-scripts"
-    recurce: "no"
-    use_regex: no
+    recurse: "no"
+    use_regex: "no"
     patterns: 'ifcfg-e*'
-    hidden: no
-    file_type: file
+    hidden: "no"
+    file_type: "file"
   register: ifcfg_files
 
 - name: remove network config files
   file:
     path: "{{ item.path }}"
-    state: absent
+    state: "absent"
   with_items:
     - "{{ ifcfg_files.files|default([]) }}"
   when: ifcfg_files
@@ -84,52 +84,31 @@
 - name: find bash history files
   find:
     paths: "/root, /home"
-    recurce: "yes"
-    use_regex: no
+    recurse: "yes"
+    use_regex: "no"
     patterns: '.bash_history'
-    hidden: yes
-    file_type: file
+    hidden: "yes"
+    file_type: "file"
   register: bash_history
   tags:
     - clean_bash_history
+
 - name: remove rotated logs and archives
   file:
     path: "{{ item.path }}"
-    state: absent
+    state: "absent"
   with_items:
     - "{{ bash_history.files|default([]) }}"
-  when: bash_history  
+  when: bash_history
   tags:
     - clean_bash_history
 
 - name: remove machine id
   file:
     path: "/etc/machine-id"
-    state: absent
+    state: "absent"
   tags:
     - clean_machine_id
-
-- name: find temp files
-  find:
-    paths: "/tmp, /var/tmp"
-    recurce: "yes"
-    use_regex: no
-    patterns: '*'
-    hidden: yes
-    file_type: any
-  register: temp_files
-  tags:
-  - clean_temp_files
-  
-- name: remove temp files
-  file:
-    path: "{{ item.path }}"
-    state: absent
-  with_items:
-    - "{{ temp_files.files|default([]) }}"
-  when: temp_files
-  tags:
-  - clean_temp_files
 
 - name: touch autorelabel
   file:
@@ -140,5 +119,27 @@
   file:
     state: absent
     path: /var/cache/yum
+
+- name: find temp files
+  find:
+    paths: "/tmp, /var/tmp"
+    recurse: "yes"
+    use_regex: "no"
+    patterns: '*'
+    hidden: "yes"
+    file_type: "any"
+  register: temp_files
+  tags:
+  - clean_temp_files
+
+- name: remove temp files
+  file:
+    path: "{{ item.path }}"
+    state: "absent"
+  with_items:
+    - "{{ temp_files.files|default([]) }}"
+  when: temp_files
+  tags:
+  - clean_temp_files
 
 ...
