@@ -69,7 +69,7 @@
     paths: "/root, /home"
     recurse: "yes"
     use_regex: "no"
-    patterns: '.bash_history'
+    patterns: '.bash_history, *.ks'
     hidden: "yes"
     file_type: "file"
   register: bash_history
