@@ -1,4 +1,5 @@
 ---
+
 - name: chattr resolv file
   file:
     path: /etc/resolv.conf
@@ -16,3 +17,5 @@
   file:
     path: /etc/resolv.conf
     attributes: ie    
+
+...

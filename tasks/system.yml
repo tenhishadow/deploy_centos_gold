@@ -1,4 +1,5 @@
 ---
+
 - name: managing journald config
   template:
     src: templates/journald.j2
@@ -29,4 +30,6 @@
   notify: restart chrony
 
 - name: enable and start chrony
-  service: name=chronyd state=started enabled=yes
+  service: name=chronyd enabled=yes
+
+...
