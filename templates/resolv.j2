@@ -1,7 +1,7 @@
 # {{ ansible_managed }}
 
 {%for dnssearch in resolve_domains%}
-search {{ dns }}
+search {{ dnssearch }}
 {%endfor%}
 
 {%for dns in nameservers%}
