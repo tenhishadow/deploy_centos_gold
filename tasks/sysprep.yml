@@ -63,6 +63,79 @@
     - "{{ gzipped_logs.files|default([]) }}"
   when: gzipped_logs
 
+- name: find network config files
+  find:
+    paths: "/etc/sysconfig/network-scripts"
+    recurce: "no"
+    use_regex: no
+    patterns: 'ifcfg-e*'
+    hidden: no
+    file_type: file
+  register: ifcfg_files
+
+- name: remove network config files
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items:
+    - "{{ ifcfg_files.files|default([]) }}"
+  when: ifcfg_files
+
+- name: find bash history files
+  find:
+    paths: "/root, /home"
+    recurce: "yes"
+    use_regex: no
+    patterns: '.bash_history'
+    hidden: yes
+    file_type: file
+  register: bash_history
+  tags:
+    - clean_bash_history
+- name: remove rotated logs and archives
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items:
+    - "{{ bash_history.files|default([]) }}"
+  when: bash_history  
+  tags:
+    - clean_bash_history
+
+- name: remove machine id
+  file:
+    path: "/etc/machine-id"
+    state: absent
+  tags:
+    - clean_machine_id
+
+- name: find temp files
+  find:
+    paths: "/tmp, /var/tmp"
+    recurce: "yes"
+    use_regex: no
+    patterns: '*'
+    hidden: yes
+    file_type: any
+  register: temp_files
+  tags:
+  - clean_temp_files
+  
+- name: remove temp files
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items:
+    - "{{ temp_files.files|default([]) }}"
+  when: temp_files
+  tags:
+  - clean_temp_files
+
+- name: touch autorelabel
+  file:
+    path: "/.autorelabel"
+    state: touch
+
 - name: clean yum cache
   file:
     state: absent
